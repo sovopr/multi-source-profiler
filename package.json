@@ -1,0 +1,31 @@
+{
+  "name": "candidate-transformer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/pdfkit": "^0.17.6",
+    "commander": "^15.0.0",
+    "csv-parse": "^7.0.0",
+    "i18n-iso-countries": "^7.14.0",
+    "libphonenumber-js": "^1.13.7",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.19.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "@types/pdf-parse": "^1.1.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  }
+}
