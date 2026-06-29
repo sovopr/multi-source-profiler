@@ -9,7 +9,7 @@ export async function processCsv(filePath: string): Promise<RawRecord[]> {
   const records: RawRecord[] = [];
   try {
     const fileContent = await fs.promises.readFile(filePath, 'utf-8');
-    const parsed = parse(fileContent, { columns: true, skip_empty_lines: true });
+    const parsed: any[] = parse(fileContent, { columns: true, skip_empty_lines: true });
     
     for (const row of parsed) {
       const name = row.name?.trim();

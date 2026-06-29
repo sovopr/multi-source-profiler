@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-color: #0b0f19;
+  --panel-bg: rgba(20, 27, 45, 0.6);
+  --panel-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --accent-neon: #38bdf8;
+  --accent-glow: rgba(56, 189, 248, 0.5);
+  --accent-green: #34d399;
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(52, 211, 153, 0.05) 0%, transparent 50%);
+}
+
+.app-container {
+  display: flex;
+  width: 90vw;
+  max-width: 1400px;
+  height: 90vh;
+  gap: 2rem;
+}
+
+.glass-panel {
+  background: var(--panel-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.input-section {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.output-section {
+  flex: 2;
+  overflow-y: auto;
+}
+
+h1, h2 {
+  margin-top: 0;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.title-glow {
+  color: var(--accent-neon);
+  text-shadow: 0 0 10px var(--accent-glow);
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+input[type="text"], input[type="file"], textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent-neon);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+input[type="file"]::file-selector-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--panel-border);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-right: 1rem;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+button.submit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 1rem;
+}
+
+button.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+button.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button.submit-btn:disabled {
+  background: #475569;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.profile-card {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--accent-green);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.output-header h2 {
+  margin: 0;
+}
+
+pre {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  border-radius: 12px;
+  overflow-x: auto;
+  color: #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Custom scrollbar for webkit */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

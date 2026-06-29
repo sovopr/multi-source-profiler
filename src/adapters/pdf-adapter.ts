@@ -1,5 +1,5 @@
 import fs from 'fs';
-import pdfParse from 'pdf-parse';
+const pdfParse = require('pdf-parse').default || require('pdf-parse');
 import { RawRecord, ExperienceRaw, EducationRaw } from '../core/types';
 
 export const PDF_TRUST = 0.75;
@@ -7,10 +7,11 @@ export const PDF_TRUST = 0.75;
 export async function processPdf(filePath: string): Promise<RawRecord> {
   try {
     const dataBuffer = await fs.promises.readFile(filePath);
-    const data = await pdfParse(dataBuffer);
+    const parseFunc = typeof pdfParse === 'function' ? pdfParse : (pdfParse.default || pdfParse);
+    const data = await parseFunc(dataBuffer);
     const text = data.text;
     
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const lines = text.split('\n').map((l: string) => l.trim()).filter((l: string) => l.length > 0);
     
     let name: string | undefined = undefined;
     if (lines.length > 0) {

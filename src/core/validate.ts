@@ -52,7 +52,7 @@ export function validateCanonical(profile: unknown):
   if (result.success) {
     return { valid: true, data: result.data as CanonicalProfile };
   } else {
-    return { valid: false, errors: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`) };
+    return { valid: false, errors: result.error.issues.map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`) };
   }
 }
 
@@ -84,6 +84,6 @@ export function validateProjected(projected: unknown, config: OutputConfig):
   if (result.success) {
     return { valid: true, data: result.data as Record<string, unknown> };
   } else {
-    return { valid: false, errors: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`) };
+    return { valid: false, errors: result.error.issues.map((e: z.ZodIssue) => `${e.path.join('.')}: ${e.message}`) };
   }
 }
