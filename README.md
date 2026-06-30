@@ -59,6 +59,11 @@ GitHub is treated as its own candidate unless it shares a normalized contact key
 
 ## Architecture Decisions
 
+**Platform-Aware OCR Fallback (Image-Only PDFs):**
+The pipeline natively processes text-based PDFs using standard Node streams (`pdf-parse` and zlib). However, for *image-only* or heavily rasterized PDFs, it falls back to OCR. Because OCR native compilation (`canvas`, `tesseract.js`, `pdf2pic`) is notoriously fragile and breaks standard `npm install` on machines lacking system libraries, they are listed as **optional dependencies**.
+- **macOS:** It leverages the built-in `sips` engine, guaranteeing 100% reliable conversion without Ghostscript.
+- **Linux/Windows:** It falls back to `pdf2pic`. *For Windows users specifically*, if you wish to process image-only PDFs, you must install Ghostscript and GraphicsMagick on your system path. If they are not installed, the pipeline will simply log a warning and gracefully degrade (returning an empty profile) rather than crashing.
+
 **SHA-256 Fingerprinting vs Probabilistic Matching:**
 We use a deterministic SHA-256 hash of sorted, normalized emails and phone numbers to generate the `candidate_id` instead of probabilistic name matching. Probabilistic matching often leads to silent false-positives that pollute downstream systems, whereas cryptographic fingerprinting guarantees explainable, deterministic ID generation where the same inputs always yield the same ID.
 
