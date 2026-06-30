@@ -1,0 +1,16 @@
+node_modules/
+dist/
+uploads/
+.env
+.env.*
+*.log
+.DS_Store
+*.traineddata
+*.png
+*_results.json
+*_report.json
+
+# Scratch and Local Tests
+scripts/
+tests/kartik.test.ts
+tests/manas.test.ts

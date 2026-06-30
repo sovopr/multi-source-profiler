@@ -1,10 +1,10 @@
 {
-  "name": "candidate-transformer",
+  "name": "multi-source-profiler",
   "version": "1.0.0",
-  "description": "",
+  "description": "Transforms messy multi-source candidate data into trustworthy canonical profiles with deterministic conflict resolution and provenance tracking",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --exclude \"dist/**\"",
     "build": "tsc",
     "start:ui": "concurrently \"npm run start:api\" \"npm run start:frontend\"",
     "start:api": "ts-node src/server.ts",
@@ -16,6 +16,7 @@
   "type": "commonjs",
   "dependencies": {
     "@types/pdfkit": "^0.17.6",
+    "canvas": "^3.2.3",
     "commander": "^15.0.0",
     "cors": "^2.8.6",
     "csv-parse": "^7.0.0",
@@ -23,8 +24,11 @@
     "i18n-iso-countries": "^7.14.0",
     "libphonenumber-js": "^1.13.7",
     "multer": "^2.2.0",
-    "pdf-parse": "^2.4.5",
+    "pdf-parse": "^1.1.1",
+    "pdf2pic": "^3.2.0",
+    "pdfjs-dist": "^6.1.200",
     "pdfkit": "^0.19.1",
+    "tesseract.js": "^7.0.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

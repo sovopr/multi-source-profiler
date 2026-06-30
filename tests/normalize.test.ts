@@ -5,6 +5,10 @@ describe('normalizePhone', () => {
   it('normalizes valid phone with country hint', () => {
     expect(normalizePhone('9876543210', 'IN')).toBe('+919876543210');
   });
+  it('normalizes valid phone defaulting to US without hint', () => {
+    // Without a hint, US is tried first (assignment is for a US company)
+    expect(normalizePhone('4155550123')).toBe('+14155550123');
+  });
   it('normalizes valid international phone', () => {
     expect(normalizePhone('+1-415-555-0123')).toBe('+14155550123');
   });

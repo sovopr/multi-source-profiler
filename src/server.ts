@@ -28,15 +28,30 @@ app.post('/api/transform', upload.fields([{ name: 'csv' }, { name: 'resume' }]),
       }
     }
 
+    const csvFile = files?.['csv']?.[0];
+    const resumeFile = files?.['resume']?.[0];
+    const cleanupUploads = async () => {
+      if (csvFile?.path) await fs.promises.unlink(csvFile.path).catch(() => {});
+      if (resumeFile?.path) await fs.promises.unlink(resumeFile.path).catch(() => {});
+    };
+
+    if (csvFile && !csvFile.originalname.toLowerCase().trim().endsWith('.csv')) {
+      await cleanupUploads();
+      return res.status(400).json({ error: 'The CSV field requires a valid .csv file' });
+    }
+    if (resumeFile && !resumeFile.originalname.toLowerCase().trim().endsWith('.pdf')) {
+      await cleanupUploads();
+      return res.status(400).json({ error: 'The Resume field requires a valid .pdf file' });
+    }
+
     const result = await run({
-      csvPath: files?.['csv']?.[0]?.path,
+      csvPath: csvFile?.path,
       githubUsername: githubUsername,
-      resumePdfPath: files?.['resume']?.[0]?.path
+      resumePdfPath: resumeFile?.path
     }, config);
 
     // Clean up uploaded temp files
-    if (files?.['csv']?.[0]?.path) await fs.promises.unlink(files['csv'][0].path).catch(() => {});
-    if (files?.['resume']?.[0]?.path) await fs.promises.unlink(files['resume'][0].path).catch(() => {});
+    await cleanupUploads();
 
     res.json(result);
   } catch (error: any) {

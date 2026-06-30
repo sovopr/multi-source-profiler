@@ -1,130 +1,216 @@
-{
-  "candidate_id": "cand_00cd487a805f8ef1",
-  "full_name": "The Octocat",
-  "emails": [
-    "jane.doe@gmail.com",
-    "john.smith@outlook.com"
-  ],
-  "phones": [
-    "+14155550123"
-  ],
-  "location": {},
-  "links": {
-    "github": "https://github.com/octocat"
+[
+  {
+    "candidate_id": "cand_9ddb6fa553e1d464",
+    "full_name": "Jane Doe",
+    "emails": [
+      "jane.doe@gmail.com"
+    ],
+    "phones": [
+      "+919876543210"
+    ],
+    "location": {},
+    "links": {},
+    "headline": null,
+    "years_experience": 6.4,
+    "skills": [
+      {
+        "name": "javascript",
+        "confidence": 0.56,
+        "sources": [
+          "pdf"
+        ]
+      },
+      {
+        "name": "machine-learning",
+        "confidence": 0.41,
+        "sources": [
+          "pdf"
+        ]
+      },
+      {
+        "name": "python",
+        "confidence": 0.56,
+        "sources": [
+          "pdf"
+        ]
+      },
+      {
+        "name": "reactjs",
+        "confidence": 0.56,
+        "sources": [
+          "pdf"
+        ]
+      },
+      {
+        "name": "sql",
+        "confidence": 0.56,
+        "sources": [
+          "pdf"
+        ]
+      },
+      {
+        "name": "typescript",
+        "confidence": 0.56,
+        "sources": [
+          "pdf"
+        ]
+      }
+    ],
+    "experience": [
+      {
+        "company": "Acme Corp",
+        "title": "Senior Software Engineer",
+        "start": "2020-01",
+        "end": null,
+        "summary": "Worked on distributed systems and microservices using Node.js and React."
+      }
+    ],
+    "projects": [],
+    "education": [
+      {
+        "institution": "University of Technology",
+        "degree": "B.S. in Computer Science",
+        "field": "Computer Science",
+        "end_year": null
+      }
+    ],
+    "provenance": [
+      {
+        "field": "full_name",
+        "source": "csv,pdf",
+        "method": "direct",
+        "raw_value": "Jane Doe"
+      },
+      {
+        "field": "emails",
+        "source": "csv,pdf",
+        "method": "normalized",
+        "raw_value": "jane.doe@gmail.com"
+      },
+      {
+        "field": "phones",
+        "source": "csv,pdf",
+        "method": "normalized",
+        "raw_value": "+919876543210"
+      },
+      {
+        "field": "skills",
+        "source": "pdf",
+        "method": "union"
+      },
+      {
+        "field": "skills",
+        "source": "pdf",
+        "method": "union"
+      },
+      {
+        "field": "skills",
+        "source": "pdf",
+        "method": "union"
+      },
+      {
+        "field": "skills",
+        "source": "pdf",
+        "method": "union"
+      },
+      {
+        "field": "skills",
+        "source": "pdf",
+        "method": "union"
+      },
+      {
+        "field": "skills",
+        "source": "pdf",
+        "method": "union"
+      },
+      {
+        "field": "experience",
+        "source": "csv",
+        "method": "heuristic"
+      },
+      {
+        "field": "experience",
+        "source": "pdf",
+        "method": "heuristic"
+      },
+      {
+        "field": "education",
+        "source": "pdf",
+        "method": "heuristic"
+      },
+      {
+        "field": "candidate_id",
+        "source": "engine",
+        "method": "direct"
+      },
+      {
+        "field": "overall_confidence",
+        "source": "engine",
+        "method": "weighted_aggregate"
+      }
+    ],
+    "overall_confidence": 0.73
   },
-  "headline": null,
-  "years_experience": null,
-  "skills": [
-    {
-      "name": "ruby",
-      "confidence": 0.85,
-      "sources": [
-        "github"
-      ]
-    },
-    {
-      "name": "css",
-      "confidence": 0.85,
-      "sources": [
-        "github"
-      ]
-    },
-    {
-      "name": "html",
-      "confidence": 0.85,
-      "sources": [
-        "github"
-      ]
-    }
-  ],
-  "experience": [
-    {
-      "company": "Acme Corp",
-      "title": "Senior Software Engineer",
-      "start": null,
-      "end": null,
-      "summary": ""
-    }
-  ],
-  "education": [],
-  "provenance": [
-    {
-      "field": "full_name",
-      "source": "github",
-      "method": "direct",
-      "raw_value": "The Octocat"
-    },
-    {
-      "field": "full_name",
-      "source": "csv",
-      "method": "discarded_conflict",
-      "raw_value": "Jane Doe"
-    },
-    {
-      "field": "full_name",
-      "source": "csv",
-      "method": "discarded_conflict",
-      "raw_value": "John Smith"
-    },
-    {
-      "field": "location.country",
-      "source": "github",
-      "method": "direct",
-      "raw_value": "San Francisco"
-    },
-    {
-      "field": "emails",
-      "source": "csv",
-      "method": "normalized",
-      "raw_value": "jane.doe@gmail.com"
-    },
-    {
-      "field": "emails",
-      "source": "csv",
-      "method": "normalized",
-      "raw_value": "john.smith@outlook.com"
-    },
-    {
-      "field": "phones",
-      "source": "csv",
-      "method": "normalized",
-      "raw_value": "+1-415-555-0123"
-    },
-    {
-      "field": "skills",
-      "source": "github",
-      "method": "union"
-    },
-    {
-      "field": "skills",
-      "source": "github",
-      "method": "union"
-    },
-    {
-      "field": "skills",
-      "source": "github",
-      "method": "union"
-    },
-    {
-      "field": "experience",
-      "source": "csv",
-      "method": "heuristic"
-    },
-    {
-      "field": "candidate_id",
-      "source": "engine",
-      "method": "direct"
-    },
-    {
-      "field": "links.github",
-      "source": "github",
-      "method": "direct"
-    },
-    {
-      "field": "overall_confidence",
-      "source": "engine",
-      "method": "inferred"
-    }
-  ],
-  "overall_confidence": 0.6566666666666666
-}
+  {
+    "candidate_id": "cand_0ee24d488bbbf089",
+    "full_name": "John Smith",
+    "emails": [
+      "john.smith@outlook.com"
+    ],
+    "phones": [
+      "+14155550123"
+    ],
+    "location": {},
+    "links": {},
+    "headline": null,
+    "years_experience": null,
+    "skills": [],
+    "experience": [
+      {
+        "company": "Beta Inc",
+        "title": "Data Scientist",
+        "start": null,
+        "end": null,
+        "summary": ""
+      }
+    ],
+    "projects": [],
+    "education": [],
+    "provenance": [
+      {
+        "field": "full_name",
+        "source": "csv",
+        "method": "direct",
+        "raw_value": "John Smith"
+      },
+      {
+        "field": "emails",
+        "source": "csv",
+        "method": "normalized",
+        "raw_value": "john.smith@outlook.com"
+      },
+      {
+        "field": "phones",
+        "source": "csv",
+        "method": "normalized",
+        "raw_value": "+14155550123"
+      },
+      {
+        "field": "experience",
+        "source": "csv",
+        "method": "heuristic"
+      },
+      {
+        "field": "candidate_id",
+        "source": "engine",
+        "method": "direct"
+      },
+      {
+        "field": "overall_confidence",
+        "source": "engine",
+        "method": "weighted_aggregate"
+      }
+    ],
+    "overall_confidence": 0.73
+  }
+]

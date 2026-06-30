@@ -11,10 +11,19 @@ export async function processGithub(username: string): Promise<RawRecord> {
       headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
     }
 
-    const [userRes, reposRes] = await Promise.all([
+    let [userRes, reposRes] = await Promise.all([
       fetch(`https://api.github.com/users/${username}`, { headers }),
       fetch(`https://api.github.com/users/${username}/repos?per_page=100`, { headers })
     ]);
+
+    if (userRes.status === 401 && headers['Authorization']) {
+      console.warn(`[GitHub Adapter] 401 Unauthorized with token, retrying unauthenticated...`);
+      delete headers['Authorization'];
+      [userRes, reposRes] = await Promise.all([
+        fetch(`https://api.github.com/users/${username}`, { headers }),
+        fetch(`https://api.github.com/users/${username}/repos?per_page=100`, { headers })
+      ]);
+    }
 
     if (!userRes.ok) {
       throw new Error(`GitHub user fetch failed with status ${userRes.status}`);
@@ -27,9 +36,13 @@ export async function processGithub(username: string): Promise<RawRecord> {
     }
 
     const skills = new Set<string>();
-    const repos = reposData.map((repo: any) => {
+    const projects_raw = reposData.map((repo: any) => {
       if (repo.language) skills.add(repo.language);
-      return { name: repo.name, languages: repo.language ? [repo.language] : [] };
+      return { 
+        name: repo.name, 
+        description: repo.description || undefined,
+        link: repo.html_url || undefined
+      };
     });
 
     return {
@@ -42,7 +55,7 @@ export async function processGithub(username: string): Promise<RawRecord> {
         location_raw: userData.location || undefined,
         emails: userData.email ? [userData.email] : undefined,
         skills_raw: Array.from(skills),
-        repos: repos
+        projects_raw: projects_raw
       }
     };
 

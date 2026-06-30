@@ -26,7 +26,7 @@ export interface RawRecord {
     experience_raw?: ExperienceRaw[];
     education_raw?: EducationRaw[];
     github_username?: string;
-    repos?: { name: string; languages: string[] }[];
+    projects_raw?: { name: string; description?: string; link?: string; }[];
     bio?: string;
   };
 }
@@ -42,6 +42,7 @@ export interface CanonicalProfile {
   years_experience: number | null;
   skills: { name: string; confidence: number; sources: string[] }[];
   experience: { company: string; title: string; start: string | null; end: string | null; summary: string }[];
+  projects: { name: string; description?: string; link?: string; }[];
   education: { institution: string; degree: string; field: string; end_year: number | null }[];
   provenance: { field: string; source: string; method: string; raw_value?: string }[];
   overall_confidence: number;

@@ -4,6 +4,7 @@ import path from 'path';
 import { processCsv } from '../src/adapters/csv-adapter';
 import { processGithub } from '../src/adapters/github-adapter';
 import { normalizePhone } from '../src/core/normalize';
+import { run } from '../src/pipeline';
 
 describe('Edge Cases', () => {
   it('CSV with all malformed rows returns empty valid records', async () => {
@@ -25,5 +26,20 @@ describe('Edge Cases', () => {
 
   it('Phone with location hint normalizes correctly', () => {
     expect(normalizePhone('9876543210', 'IN')).toBe('+919876543210');
+  });
+
+  it('does not merge distinct CSV candidates into one profile', async () => {
+    const csvPath = path.resolve(__dirname, 'two-candidates.csv');
+    await fs.promises.writeFile(csvPath, [
+      'name,email,phone,current_company,title',
+      'Jane Doe,jane.doe@gmail.com,9876543210,Acme Corp,Engineer',
+      'John Smith,john.smith@outlook.com,+1-415-555-0123,Beta Inc,Scientist'
+    ].join('\n'));
+
+    const result = await run({ csvPath });
+    expect(Array.isArray(result.canonical)).toBe(true);
+    expect(result.canonical).toHaveLength(2);
+
+    await fs.promises.unlink(csvPath);
   });
 });

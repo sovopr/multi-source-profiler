@@ -3,6 +3,7 @@ import { processCsv } from './adapters/csv-adapter';
 import { processGithub } from './adapters/github-adapter';
 import { processPdf } from './adapters/pdf-adapter';
 import { mergeRecords } from './core/merge';
+import { normalizeEmail, normalizePhone } from './core/normalize';
 import { project } from './core/project';
 import { validateCanonical, validateProjected } from './core/validate';
 
@@ -16,6 +17,66 @@ export interface PipelineResult {
   canonical: unknown;
   projected?: unknown;
   errors?: string[];
+}
+
+function recordKeys(record: RawRecord): string[] {
+  const keys = new Set<string>();
+
+  for (const email of record.raw.emails || []) {
+    const normalized = normalizeEmail(email);
+    if (normalized) keys.add(`email:${normalized}`);
+  }
+
+  for (const phone of record.raw.phones || []) {
+    const normalized = normalizePhone(phone);
+    if (normalized) keys.add(`phone:${normalized}`);
+  }
+
+  if (keys.size === 0 && record.raw.full_name) {
+    keys.add(`name:${record.raw.full_name.trim().toLowerCase()}`);
+  }
+
+  if (keys.size === 0 && record.raw.github_username) {
+    keys.add(`github:${record.raw.github_username.trim().toLowerCase()}`);
+  }
+
+  return Array.from(keys);
+}
+
+function groupRecords(records: RawRecord[]): RawRecord[][] {
+  const groups: RawRecord[][] = [];
+  const keyToGroup = new Map<string, number>();
+
+  for (const record of records) {
+    const keys = recordKeys(record);
+    const matchedGroups = Array.from(new Set(keys.map(key => keyToGroup.get(key)).filter((idx): idx is number => idx !== undefined)));
+
+    if (matchedGroups.length === 0) {
+      const groupIndex = groups.length;
+      groups.push([record]);
+      for (const key of keys) keyToGroup.set(key, groupIndex);
+      continue;
+    }
+
+    const primaryIndex = matchedGroups[0];
+    groups[primaryIndex].push(record);
+
+    for (const extraIndex of matchedGroups.slice(1).sort((a, b) => b - a)) {
+      const extraGroup = groups[extraIndex];
+      groups[primaryIndex].push(...extraGroup);
+      groups.splice(extraIndex, 1);
+      for (const [key, index] of keyToGroup.entries()) {
+        if (index === extraIndex) keyToGroup.set(key, primaryIndex);
+        else if (index > extraIndex) keyToGroup.set(key, index - 1);
+      }
+    }
+
+    for (const groupedRecord of groups[primaryIndex]) {
+      for (const key of recordKeys(groupedRecord)) keyToGroup.set(key, primaryIndex);
+    }
+  }
+
+  return groups;
 }
 
 export async function run(inputs: PipelineInputs, config?: OutputConfig): Promise<PipelineResult> {
@@ -45,26 +106,46 @@ export async function run(inputs: PipelineInputs, config?: OutputConfig): Promis
     return { canonical: null, errors: ['No valid records produced by any source'] };
   }
 
-  const canonical = mergeRecords(validRecords);
+  const grouped = groupRecords(validRecords);
+  const canonicalProfiles = grouped.map(group => mergeRecords(group));
+  const canonical = canonicalProfiles.length === 1 ? canonicalProfiles[0] : canonicalProfiles;
+  const errors: string[] = [];
   
-  const validation = validateCanonical(canonical);
-  if (!validation.valid) {
-    console.warn(`[Pipeline] Canonical profile failed validation:`, validation.errors);
+  for (const [index, profile] of canonicalProfiles.entries()) {
+    const validation = validateCanonical(profile);
+    if (!validation.valid) {
+      const prefixed = validation.errors.map(error => `canonical[${index}].${error}`);
+      errors.push(...prefixed);
+      console.warn(`[Pipeline] Canonical profile failed validation:`, prefixed);
+    }
   }
 
   const output: PipelineResult = { canonical };
 
   if (config) {
-    const projected = project(canonical, config);
-    if (projected.errors.length > 0) {
-      console.warn(`[Pipeline] Projection warnings:`, projected.errors);
+    const projectedResults = canonicalProfiles.map(profile => project(profile, config));
+    const projectedData = projectedResults.map(result => result.data);
+    const projected = projectedData.length === 1 ? projectedData[0] : projectedData;
+
+    for (const [index, result] of projectedResults.entries()) {
+      if (result.errors.length > 0) {
+        const prefixed = result.errors.map(error => `projected[${index}].${error}`);
+        errors.push(...prefixed);
+        console.warn(`[Pipeline] Projection warnings:`, prefixed);
+      }
+
+      const projValidation = validateProjected(result.data, config);
+      if (!projValidation.valid) {
+        const prefixed = projValidation.errors.map(error => `projected[${index}].${error}`);
+        errors.push(...prefixed);
+        console.warn(`[Pipeline] Projected profile failed validation:`, prefixed);
+      }
     }
-    const projValidation = validateProjected(projected.data, config);
-    if (!projValidation.valid) {
-      console.warn(`[Pipeline] Projected profile failed validation:`, projValidation.errors);
-    }
-    output.projected = projected.data;
+
+    output.projected = projected;
   }
+
+  if (errors.length > 0) output.errors = errors;
 
   return output;
 }

@@ -37,14 +37,20 @@ export function project(canonical: CanonicalProfile, config: OutputConfig): { da
       }
     }
 
-    const isMissing = val === undefined || val === null || (Array.isArray(val) && val.length === 0 && val.length === 0);
+    const isMissing = val === undefined || val === null || (Array.isArray(val) && val.length === 0);
     
     if (isMissing) {
+      // Required fields always produce an error when missing
+      if (spec.required) {
+        errors.push(`Required field missing: ${spec.path}`);
+      }
+
       const onMissing = config.on_missing || 'null';
       if (onMissing === 'omit') {
         continue;
-      } else if (onMissing === 'error') {
-        errors.push(`Missing required field: ${spec.path}`);
+      } else if (onMissing === 'error' && !spec.required) {
+        // non-required fields with on_missing=error also log
+        errors.push(`Missing field: ${spec.path}`);
         continue;
       } else {
         val = null;

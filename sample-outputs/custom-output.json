@@ -1,8 +1,18 @@
-{
-  "full_name": "Jane Doe",
-  "primary_email": "jane.doe@gmail.com",
-  "phone": "+14155550123",
-  "skills": null,
-  "confidence_score": 0.6066666666666666,
-  "overall_confidence": 0.6066666666666666
-}
+[
+  {
+    "full_name": "Jane Doe",
+    "primary_email": "jane.doe@gmail.com",
+    "phone": "+919876543210",
+    "skills": null,
+    "confidence_score": 0.73,
+    "overall_confidence": 0.73
+  },
+  {
+    "full_name": "John Smith",
+    "primary_email": "john.smith@outlook.com",
+    "phone": "+14155550123",
+    "skills": null,
+    "confidence_score": 0.73,
+    "overall_confidence": 0.73
+  }
+]

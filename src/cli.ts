@@ -15,6 +15,7 @@ program
   .option('--config <path>', 'path to output config JSON')
   .option('--out <path>', 'output file path (defaults to stdout)')
   .option('--pretty', 'pretty-print JSON output')
+  .option('--strict', 'exit non-zero on validation errors')
   .action(async (options) => {
     try {
       let config = undefined;
@@ -36,6 +37,17 @@ program
         await fs.promises.writeFile(path.resolve(options.out), jsonStr, 'utf-8');
       } else {
         console.log(jsonStr);
+      }
+
+      // Surface validation errors to stderr
+      if (result.errors && result.errors.length > 0) {
+        console.error(`\n⚠ Validation warnings (${result.errors.length}):`);
+        for (const err of result.errors) {
+          console.error(`  - ${err}`);
+        }
+        if (options.strict) {
+          process.exit(1);
+        }
       }
       
       process.exit(0);
