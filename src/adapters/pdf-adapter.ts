@@ -5,7 +5,6 @@ import os from 'os';
 import path from 'path';
 import { RawRecord, ExperienceRaw, EducationRaw } from '../core/types';
 
-export const PDF_TRUST = 0.75;
 
 async function extractText(filePath: string): Promise<string> {
   const dataBuffer = await fs.promises.readFile(filePath);

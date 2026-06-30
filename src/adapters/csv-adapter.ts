@@ -3,7 +3,6 @@ import { parse } from 'csv-parse/sync';
 import { RawRecord } from '../core/types';
 import { normalizeEmail } from '../core/normalize';
 
-export const CSV_TRUST = 0.70;
 
 /**
  * Fuzzy header mapping: the assignment states CSV field names "do NOT match ours."

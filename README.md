@@ -117,7 +117,6 @@ The PDF adapter tries `pdf-parse` first, then falls back to decoding compressed 
 - **NLP Extraction Descoped**: True semantic understanding of unstructured prose in resumes requires deep NLP models. We descoped this for speed, relying on robust regex heuristics for sectional boundary detection instead.
 - **Probabilistic Entity Resolution Descoped**: Identifying "Jane Doe" from CSV as the exact same person as "Jane M. Doe" in a PDF is descoped in favor of deterministic key-matching on emails and phones.
 - **Experience Overlap Resolution**: We deduplicate obvious duplicate roles across sources, but do not try to semantically reconcile concurrent overlapping jobs.
-- **Rate Limiting Handling**: While the GitHub adapter degrades gracefully, it does not currently implement smart retry-after queuing to recover from rate limits during bulk runs.
 
 ## Sample Output (Default Schema snippet)
 

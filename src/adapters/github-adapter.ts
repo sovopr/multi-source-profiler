@@ -1,6 +1,30 @@
 import { RawRecord } from '../core/types';
 
-export const GITHUB_TRUST = 0.85;
+
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+async function fetchWithBackoff(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+  let attempt = 0;
+  while (true) {
+    const res = await fetch(url, options);
+    if ((res.status === 403 || res.status === 429) && attempt < maxRetries) {
+      const resetStr = res.headers.get('x-ratelimit-reset');
+      let waitMs = 1000 * Math.pow(2, attempt); 
+      if (resetStr) {
+        const resetMs = parseInt(resetStr, 10) * 1000;
+        const now = Date.now();
+        if (resetMs > now && (resetMs - now) < 60000) {
+            waitMs = resetMs - now + 1000;
+        }
+      }
+      console.warn(`[GitHub Adapter] Rate limited (${res.status}) on ${url}. Retrying in ${waitMs}ms...`);
+      await delay(waitMs);
+      attempt++;
+      continue;
+    }
+    return res;
+  }
+}
 
 export async function processGithub(username: string): Promise<RawRecord> {
   try {
@@ -12,16 +36,16 @@ export async function processGithub(username: string): Promise<RawRecord> {
     }
 
     let [userRes, reposRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${username}`, { headers }),
-      fetch(`https://api.github.com/users/${username}/repos?per_page=100`, { headers })
+      fetchWithBackoff(`https://api.github.com/users/${username}`, { headers }),
+      fetchWithBackoff(`https://api.github.com/users/${username}/repos?per_page=100`, { headers })
     ]);
 
     if (userRes.status === 401 && headers['Authorization']) {
       console.warn(`[GitHub Adapter] 401 Unauthorized with token, retrying unauthenticated...`);
       delete headers['Authorization'];
       [userRes, reposRes] = await Promise.all([
-        fetch(`https://api.github.com/users/${username}`, { headers }),
-        fetch(`https://api.github.com/users/${username}/repos?per_page=100`, { headers })
+        fetchWithBackoff(`https://api.github.com/users/${username}`, { headers }),
+        fetchWithBackoff(`https://api.github.com/users/${username}/repos?per_page=100`, { headers })
       ]);
     }
 

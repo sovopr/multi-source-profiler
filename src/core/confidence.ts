@@ -13,11 +13,11 @@
 
 /** How much we trust each source type (0.0 – 1.0). */
 const SOURCE_TRUST: Record<string, number> = {
-  ats:      0.90,  // System of record, authenticated
+  ats:      1.0,   // System of record, authenticated
+  csv:      1.0,   // Manual export, designated as highest trust in this domain
   github:   0.85,  // Authenticated API, user-curated
   linkedin: 0.80,  // Semi-structured, user-curated
-  csv:      0.60,  // Manual export, may be stale
-  pdf:      0.55,  // Unstructured, OCR-prone
+  pdf:      0.75,  // Unstructured, OCR-prone
 };
 
 export interface ConfidenceBreakdown {
