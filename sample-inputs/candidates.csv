@@ -1,4 +1,4 @@
-name,email,phone,current_company,title
-Jane Doe,jane.doe@gmail.com,9876543210,Acme Corp,Senior Software Engineer
-John Smith,john.smith@outlook.com,+1-415-555-0123,Beta Inc,Data Scientist
-"",malformed_email,notaphone,,
+name,email,phone,current_company,title,skills,education,projects
+Jane Doe,jane.doe@gmail.com,9876543210,Acme Corp,Senior Software Engineer,"JavaScript, Python, React","University of Technology - B.S. Computer Science",Acme Analytics Platform
+John Smith,john.smith@outlook.com,+1-415-555-0123,Beta Inc,Data Scientist,"Python, Machine Learning, SQL","Stanford University - M.S. Data Science",Beta Predictive Model
+"",malformed_email,notaphone,,,,,
