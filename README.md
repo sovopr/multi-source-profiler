@@ -43,6 +43,39 @@ Execute the robust test suite to verify all core logic:
 npm test
 ```
 
+## Pipeline Architecture
+
+```mermaid
+graph TD
+    %% Data Sources
+    A1[(Recruiter CSV)] -->|csv-parse| B
+    A2[Resumes PDF] -->|pdf-parse / lazy OCR| B
+    A3[GitHub API] -->|fetch| B
+
+    %% Adapters Layer
+    subgraph Ingestion Layer
+    B[Adapters] --> C[RawRecords Array]
+    end
+
+    %% Entity Resolution
+    subgraph Entity Resolution
+    C -->|Extract Emails & Phones| D{Identity Clustering}
+    D -->|SHA-256 Fingerprint| E[Grouped Records]
+    end
+
+    %% Canonical Engine
+    subgraph Core Merge Engine
+    E -->|Apply Trust Weights| F[Conflict Resolution]
+    F -->|Calculate Provenance & Confidence| G[Rich CanonicalProfile]
+    end
+
+    %% Projection Layer
+    subgraph Output Formatting
+    G --> H{Schema Projector}
+    H -->|output-config.json| I[Final JSON Output]
+    end
+```
+
 ## Submission Artifacts
 
 - Design document: `SoveetPrusty_soveet.prusty@gmail.com_Eightfold.pdf`
