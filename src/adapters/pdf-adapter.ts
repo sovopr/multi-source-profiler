@@ -23,7 +23,63 @@ async function extractText(filePath: string): Promise<string> {
     text = extractTextFromPdfStreams(dataBuffer);
   }
 
+  if (!text.trim()) {
+    console.warn(`[PDF Adapter] No text layer found for ${filePath}; attempting optional OCR fallback.`);
+    text = await performOCR(filePath);
+  }
+
   return text;
+}
+
+import { execSync } from 'child_process';
+
+async function performOCR(filePath: string): Promise<string> {
+  try {
+    const Tesseract = require('tesseract.js');
+    const tmpDir = os.tmpdir();
+    const baseName = path.basename(filePath, '.pdf') + '_' + Date.now();
+    let imgPath = '';
+
+    // Strategy 1: On macOS, natively use 'sips' which is 100% reliable and doesn't require Ghostscript
+    if (os.platform() === 'darwin') {
+      imgPath = path.join(tmpDir, `${baseName}.png`);
+      try {
+        execSync(`sips -s format png "${filePath}" --out "${imgPath}"`, { stdio: 'ignore' });
+      } catch (e) {
+        console.warn(`[OCR] macOS sips conversion failed, falling back to pdf2pic.`);
+        imgPath = '';
+      }
+    }
+
+    // Strategy 2: On Linux/Windows, or if sips failed, use optional pdf2pic (GraphicsMagick)
+    if (!imgPath) {
+      const { fromPath } = require('pdf2pic');
+      const options = {
+        density: 300,
+        saveFilename: baseName,
+        savePath: tmpDir,
+        format: "png"
+      };
+      const storeAsImage = fromPath(filePath, options);
+      const resolve = await storeAsImage(1) as any;
+      imgPath = resolve.path;
+    }
+    
+    const { data: { text } } = await Tesseract.recognize(imgPath, 'eng');
+    fs.unlinkSync(imgPath);
+    
+    // If pdf2pic produced a blank image because of missing ghostscript fonts, it returns tiny garbage like "= E". 
+    // We reject garbage returns.
+    if (text.trim().length < 10) return '';
+    return text;
+  } catch (e: any) {
+    if (e.code === 'MODULE_NOT_FOUND') {
+      console.warn(`[OCR] Optional OCR dependencies not installed. Skipping OCR for ${filePath}.`);
+    } else {
+      console.warn(`[OCR] Failed to OCR ${filePath}:`, e.message || e);
+    }
+    return '';
+  }
 }
 
 function extractTextFromPdfStreams(buffer: Buffer): string {
