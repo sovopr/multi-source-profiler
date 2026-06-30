@@ -29,7 +29,15 @@ Run the pipeline with a custom projection configuration (e.g. mapping fields, to
 npx ts-node src/cli.ts --csv sample-inputs/candidates.csv --config sample-inputs/output-config.json --pretty
 ```
 
-### 3. Run Tests
+### 3. Run the Web UI (Optional)
+The project includes a full graphical interface to upload PDFs and CSVs:
+```bash
+npm install --prefix frontend
+npm run start:ui
+```
+This concurrently starts the Express API and the Vite frontend. Open the Local URL provided in the terminal (usually `http://localhost:5173`).
+
+### 4. Run Tests
 Execute the robust test suite to verify all core logic:
 ```bash
 npm test
