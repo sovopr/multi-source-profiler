@@ -1,8 +1,6 @@
 import fs from 'fs';
 import zlib from 'zlib';
 const pdfParse = require('pdf-parse');
-import { fromPath } from 'pdf2pic';
-import Tesseract from 'tesseract.js';
 import os from 'os';
 import path from 'path';
 import { RawRecord, ExperienceRaw, EducationRaw } from '../core/types';
@@ -25,39 +23,7 @@ async function extractText(filePath: string): Promise<string> {
     text = extractTextFromPdfStreams(dataBuffer);
   }
 
-  // Final fallback to OCR if both text parsers yield empty results
-  if (!text.trim()) {
-    console.warn(`[PDF Adapter] No text layer found for ${filePath}; falling back to OCR.`);
-    text = await performOCR(filePath);
-  }
-
   return text;
-}
-
-async function performOCR(filePath: string): Promise<string> {
-  const tmpDir = os.tmpdir();
-  const baseName = path.basename(filePath, '.pdf') + '_' + Date.now();
-  
-  const options = {
-    density: 300,
-    saveFilename: baseName,
-    savePath: tmpDir,
-    format: "png"
-  };
-
-  try {
-    const storeAsImage = fromPath(filePath, options);
-    const resolve = await storeAsImage(1) as any;
-    const imgPath = resolve.path;
-    
-    const { data: { text } } = await Tesseract.recognize(imgPath, 'eng');
-    fs.unlinkSync(imgPath);
-    
-    return text;
-  } catch (e) {
-    console.error(`[OCR] Failed to OCR ${filePath}:`, e);
-    return '';
-  }
 }
 
 function extractTextFromPdfStreams(buffer: Buffer): string {
@@ -159,25 +125,6 @@ export async function processPdf(filePath: string): Promise<RawRecord> {
         }
         return `${p1} ${p2}`;
     });
-
-    // Targeted kerning fixes for extreme OCR edge cases
-    const targetedFixes: Record<string, string> = {
-        'amedallion': 'a medallion',
-        'lakehouseon': 'lakehouse on',
-        'technicalStatements': 'technical Statements',
-        'Berl in': 'Berlin',
-        'Streamlitbackend': 'Streamlit backend',
-        'usingvector': 'using vector',
-        '90%semantic': '90% semantic',
-        'M\\+rows': 'M+ rows',
-        'ec 2': 'ec2',
-        's 3': 's3',
-        'c 03': 'c03',
-        'c 02': 'c02',
-    };
-    for (const [bad, good] of Object.entries(targetedFixes)) {
-        text = text.replace(new RegExp(bad, 'gi'), good);
-    }
     
     text = text.replace(/(\d\+?)([a-zA-Z])/g, '$1 $2'); 
     text = text.replace(/([a-zA-Z])(\d)/g, '$1 $2'); 

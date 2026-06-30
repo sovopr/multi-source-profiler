@@ -37,6 +37,11 @@ const CanonicalProfileSchema = z.object({
     field: z.string(),
     end_year: z.number().nullable()
   })),
+  projects: z.array(z.object({
+    name: z.string(),
+    description: z.string().optional(),
+    link: z.string().optional()
+  })).optional(),
   provenance: z.array(z.object({
     field: z.string(),
     source: z.string(),
