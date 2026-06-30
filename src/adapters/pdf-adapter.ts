@@ -167,6 +167,16 @@ export async function processPdf(filePath: string): Promise<RawRecord> {
     }
 
     // Pre-process text to fix common kerning/OCR issues
+    const commonKerningFixes: [string, string][] = [
+      ['Berl in', 'Berlin'],
+      ['Mani pal', 'Manipal'],
+      ['Mumb ai', 'Mumbai'],
+      ['amedallion', 'a medallion']
+    ];
+    for (const [bad, good] of commonKerningFixes) {
+      text = text.replace(new RegExp(bad, 'g'), good);
+    }
+
     text = text.replace(/([a-z])([A-Z])/g, (match, p1, p2, offset, string) => {
         for (const ex of camelExceptions) {
             const exTransMatches = [...ex.matchAll(/([a-z])([A-Z])/g)];
